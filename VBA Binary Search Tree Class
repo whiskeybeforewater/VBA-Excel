@@ -1,0 +1,87 @@
+Option Explicit                                     ' always force declaration of variables
+Dim root As TreeNode                                ' the base of the tree
+Private ValueToAdd As Variant                       ' private variable to hold our transferred value
+Private counter As Integer                          ' counter to track our value location within the tree
+Private outPut As Worksheet                         ' variable to pass ws into and update
+' set the root node
+Private Sub getNew()
+    Set root = getTreeNode()
+End Sub
+' create a new node to be passed back and added to tree
+Private Function getTreeNode() As TreeNode
+    Dim tempNode As New TreeNode
+    tempNode.Value = ValueToAdd
+    Set getTreeNode = tempNode
+End Function
+' access to the add sub and pass in value without recursion
+Public Sub add(v As Variant)
+    ValueToAdd = v
+    If root Is Nothing Then                         ' set the root
+        Call getNew
+    Else
+        Dim tempNode As TreeNode
+        Dim newNode As TreeNode
+        Set newNode = root                          ' passes pointers from root
+        While Not newNode Is Nothing                ' loop until Nothing if found in tree (left or right)
+            Set tempNode = newNode
+            If ValueToAdd <= newNode.Value Then     ' go left if <= newnode.value
+                Set newNode = newNode.LeftChild
+            Else                                    ' go right if > newnode.value
+                Set newNode = newNode.RightChild
+            End If
+        Wend
+        If ValueToAdd <= tempNode.Value Then
+            Set tempNode.LeftChild = getTreeNode()  ' set a new node with the value at left node
+        Else
+            Set tempNode.RightChild = getTreeNode() ' set a new node with the value at right node
+        End If
+    End If
+End Sub
+' displays the values in order from lowest to highest (left, root, right)
+Public Sub InOrder(OP As Worksheet)
+    counter = 1
+    Set outPut = OP
+    Call In_Order(root)
+End Sub
+' displays the values from left to right (root, left, right)
+Public Sub PreOrder(OP As Worksheet)
+    counter = 1
+    Set outPut = OP
+    Call Pre_Order(root)
+End Sub
+' displays the values from right to left (left, right, root)
+Public Sub PostOrder(OP As Worksheet)
+    counter = 1
+    Set outPut = OP
+    Call Post_Order(root)
+End Sub
+' recursive display
+Private Sub In_Order(TN As TreeNode)
+    If Not TN Is Nothing Then
+        Call In_Order(TN.LeftChild)
+        Debug.Print ("Item: " & counter & " Value: " & TN.Value)
+        outPut.Cells(4 + counter, 3).Value = "Item: " & counter & " Value: " & TN.Value
+        counter = counter + 1
+        Call In_Order(TN.RightChild)
+    End If
+End Sub
+' recursive display
+Private Sub Pre_Order(TN As TreeNode)
+    If Not TN Is Nothing Then
+        Debug.Print ("Item: " & counter & " Value: " & TN.Value)
+        outPut.Cells(4 + counter, 5).Value = "Item: " & counter & " Value: " & TN.Value
+        counter = counter + 1
+        Call Pre_Order(TN.LeftChild)
+        Call Pre_Order(TN.RightChild)
+    End If
+End Sub
+' recursive display
+Private Sub Post_Order(TN As TreeNode)
+    If Not TN Is Nothing Then
+        Call Post_Order(TN.LeftChild)
+        Call Post_Order(TN.RightChild)
+        Debug.Print ("Item: " & counter & " Value: " & TN.Value)
+        outPut.Cells(4 + counter, 7).Value = "Item: " & counter & " Value: " & TN.Value
+        counter = counter + 1
+    End If
+End Sub
