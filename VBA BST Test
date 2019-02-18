@@ -1,0 +1,57 @@
+''''''''''''''''''''''''''''''''''''''' Basic Binary Search Tree ''''''''''''''''''''''''''''''''''''''''
+' authored by Samuel J Bowlin                                                                           '
+' version 1.0.0                                                                                         '
+' dated February 17th, 2019                                                                             '
+' adapted, created, and sorced from:                                                                    '
+' https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-6.0/aa227540(v%3dvs.60) '
+' https://www.codeproject.com/Articles/4647/A-simple-binary-tree-implementation-with-VB-NET             '
+' credit is given, most of this is my code but I did have to use some snippets from other people        '
+' edit out the debug.print if you don't want to follow the watch window                                 '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Option Explicit                                                         ' always force declaration of variables
+Private Const bstSize As Integer = 10                                   ' change as suited for more or less vars in bst
+' this is our testing module to test the bst
+Public Sub MAIN()
+                                                    
+Application.ScreenUpdating = False
+
+Dim loopCount, rndNumber As Integer                                     ' local variables to use
+Dim lastRow As Long
+
+Dim WB As Workbook                                                      ' declare and set workbook and worksheet
+Dim WS As Worksheet
+Set WB = ThisWorkbook
+Set WS = WB.Sheets("BST")
+
+lastRow = WS.Cells(WS.Rows.Count, "A").End(xlUp).Row                    ' get lastrow
+
+WS.Range("A5:H" & lastRow + 1).ClearContents                            ' clear our used range
+
+Dim BST As New BinarySearchTree                                         ' declare a new BST
+
+Debug.Print ("Order in which values are added.")
+
+For loopCount = 1 To bstSize                                            ' loop x times and add random number
+    Randomize
+    rndNumber = Int((300 - 200 + 1) * Rnd + 200)
+    Debug.Print (loopCount & " - " & rndNumber)
+    WS.Cells(4 + loopCount, 1).Value = "Item: " & loopCount & " value: " & rndNumber
+    BST.add (rndNumber)
+Next loopCount
+
+Debug.Print ("InOrder of values.")                                      ' output values by tree traversal
+BST.InOrder WS
+
+Debug.Print ("Preorder walk of values.")
+BST.PreOrder WS
+
+Debug.Print ("Postorder walk of values.")
+BST.PostOrder WS
+
+Set BST = Nothing                                                       ' clear bst
+
+WB.Save                                                                 ' save wb
+
+Application.ScreenUpdating = True
+
+End Sub
