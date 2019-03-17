@@ -1,4 +1,0 @@
-Option Explicit                 ' always force declaration of variables
-Public Value As Variant         ' holds our integer
-Public LeftChild As TreeNode    ' points to left of node
-Public RightChild As TreeNode   ' point to right of node
